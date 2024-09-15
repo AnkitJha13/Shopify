@@ -1,6 +1,6 @@
-.product-detail{
-    max-width: 350px;
-    margin: 10rem auto 10rem auto;
+.product-detail {
+    max-width: 250px; /* Reduced the maximum width to make the card smaller */
+    margin: 3rem auto; /* Reduced margin to push the card higher */
     padding: 15px;
     border: 1px solid #ccc;
     border-radius: 10px;
@@ -11,20 +11,23 @@
     gap: 16px;
 }
 
-.product-detail img{
-    width: 350px;
+.product-detail img {
+    width: 100%; /* Adjusted to fit within the new card size */
     height: auto;
 }
 
-.product-detail h1{
+.product-detail h1 {
     text-align: center;
+    font-size: 1.5rem; /* Adjust font size for smaller card */
 }
-.product-detail span{
+
+.product-detail span {
     display: block;
-    font-size: 20px;
+    font-size: 18px; /* Adjust font size for smaller card */
     color: #f68b1e;
 }
-.product-detail button{
+
+.product-detail button {
     display: block;
     width: 100%;
     padding: 10px;
@@ -35,6 +38,7 @@
     font-size: 16px;
     cursor: pointer;
 }
-.product-detail button:hover{
+
+.product-detail button:hover {
     background-color: #8b4c0d;
 }
