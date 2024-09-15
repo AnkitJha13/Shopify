@@ -3,22 +3,22 @@ import '../../style/footer.css';
 import { NavLink } from "react-router-dom";
 
 const Footer = () => {
-
     return (
         <footer className="footer">
             <div className="footer-links">
                 <ul>
-                    <NavLink to={"/"}>About Us</NavLink>
-                    <NavLink to={"/"}>Contact Us</NavLink>
-                    <NavLink to={"/"}>Terms & Cnnditions</NavLink>
-                    <NavLink to={"/"}>Privacy Policy</NavLink>
-                    <NavLink to={"/"}>FAQs</NavLink>
+                    <li><NavLink to={"/"}>About Us</NavLink></li>
+                    <li><NavLink to={"/"}>Contact Us</NavLink></li>
+                    <li><NavLink to={"/"}>Terms & Conditions</NavLink></li>
+                    <li><NavLink to={"/"}>Privacy Policy</NavLink></li>
+                    <li><NavLink to={"/"}>FAQs</NavLink></li>
                 </ul>
             </div>
             <div className="footer-info">
-                <p>&copy; 2024 Phegon Mart. All right reserved.</p>
+                <p>&copy; 2024 Shopify Mart. All rights reserved.</p>
             </div>
         </footer>
-    )
-}
+    );
+};
+
 export default Footer;
