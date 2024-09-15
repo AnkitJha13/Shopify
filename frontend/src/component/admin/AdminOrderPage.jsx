@@ -48,7 +48,7 @@ const AdminOrdersPage = () => {
             setError(error.response?.data?.message || error.message || 'unable to fetch orders')
             setTimeout(()=>{
                 setError('')
-            }, 3000)
+            }, 1000)
         }
     }
 

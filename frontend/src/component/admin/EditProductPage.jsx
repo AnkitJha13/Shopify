@@ -55,7 +55,7 @@ const EditProductPage = () => {
                 setTimeout(() => {
                     setMessage('')
                     navigate('/admin/products')
-                }, 3000);
+                }, 1000);
             }
 
         } catch (error) {

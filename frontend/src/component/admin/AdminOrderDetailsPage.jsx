@@ -36,7 +36,7 @@ const AdminOrderDetailsPage = () => {
             setMessage('order item status was successfully updated')
             setTimeout(() => {
                 setMessage('');
-            }, 3000)
+            }, 1000)
         } catch (error) {
             setMessage(error.response?.data?.message || error.message || 'unable  to update order item status')
         }

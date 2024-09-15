@@ -23,7 +23,7 @@ const EditCategory = () => {
             setMessage(error.response?.data?.message || error.message || "Failed to get a category by id")
             setTimeout(() => {
                 setMessage('');
-            }, 3000)
+            }, 1000)
         }
     }
 
@@ -36,7 +36,7 @@ const EditCategory = () => {
                 setTimeout(() => {
                     setMessage('');
                     navigate("/admin/categories")
-                }, 3000)
+                }, 1000)
             }
         } catch (error) {
             setMessage(error.response?.data?.message || error.message || "Failed to save a category")
