@@ -23,7 +23,7 @@ const EditCategory = () => {
             setMessage(error.response?.data?.message || error.message || "Failed to get a category by id")
             setTimeout(() => {
                 setMessage('');
-            }, 1000)
+            }, 3000)
         }
     }
 

@@ -54,7 +54,7 @@ const CartPage = () => {
 
             setTimeout(() => {
                 setMessage('')
-            }, 5000);
+            }, 3000);
 
             if (response.status === 200) {
                 dispatch({ type: 'CLEAR_CART' })
@@ -64,7 +64,7 @@ const CartPage = () => {
             setMessage(error.response?.data?.message || error.message || 'Failed to place an order');
             setTimeout(() => {
                 setMessage('')
-            }, 3000);
+            }, 2000);
 
         }
 

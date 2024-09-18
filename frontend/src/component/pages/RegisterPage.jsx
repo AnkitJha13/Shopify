@@ -30,7 +30,7 @@ const RegisterPage = () => {
                 setMessage("User Successfully Registerd");
                 setTimeout(() => {
                     navigate("/login")
-                }, 4000)
+                }, 3000)
             }
         } catch (error) {
             setMessage(error.response?.data.message || error.message || "unable to register a user");

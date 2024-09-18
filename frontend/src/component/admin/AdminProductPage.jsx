@@ -10,7 +10,7 @@ const AdminProductPage = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(0);
     const [error, setError] = useState(null);
-    const itemsPerPage = 10;
+    const itemsPerPage = 5;
 
 
     const fetchProducts = async() => {
