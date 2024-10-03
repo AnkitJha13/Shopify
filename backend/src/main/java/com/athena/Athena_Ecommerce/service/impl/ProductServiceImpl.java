@@ -8,7 +8,7 @@ import com.athena.Athena_Ecommerce.exception.NotFoundException;
 import com.athena.Athena_Ecommerce.mapper.EntityDtoMapper;
 import com.athena.Athena_Ecommerce.repository.CategoryRepo;
 import com.athena.Athena_Ecommerce.repository.ProductRepo;
-import com.athena.Athena_Ecommerce.service.AwsS3Service;
+import com.athena.Athena_Ecommerce.service.CloudinaryService;
 import com.athena.Athena_Ecommerce.service.interf.ProductService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,14 +28,14 @@ public class ProductServiceImpl implements ProductService {
     private final ProductRepo productRepo;
     private final CategoryRepo categoryRepo;
     private final EntityDtoMapper entityDtoMapper;
-    private final AwsS3Service awsS3Service;
-
-
+    private final CloudinaryService cloudinaryService;
 
     @Override
     public Response createProduct(Long categoryId, MultipartFile image, String name, String description, BigDecimal price) {
-        Category category = categoryRepo.findById(categoryId).orElseThrow(()-> new NotFoundException("Category not found"));
-        String productImageUrl = awsS3Service.saveImageToS3(image);
+        Category category = categoryRepo.findById(categoryId).orElseThrow(() -> new NotFoundException("Category not found"));
+
+        // Upload image to Cloudinary
+        String productImageUrl = cloudinaryService.saveImage(image);  // Updated method call
 
         Product product = new Product();
         product.setCategory(category);
@@ -53,16 +53,17 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Response updateProduct(Long productId, Long categoryId, MultipartFile image, String name, String description, BigDecimal price) {
-        Product product = productRepo.findById(productId).orElseThrow(()-> new NotFoundException("Product Not Found"));
+        Product product = productRepo.findById(productId).orElseThrow(() -> new NotFoundException("Product Not Found"));
 
         Category category = null;
         String productImageUrl = null;
 
-        if(categoryId != null ){
-            category = categoryRepo.findById(categoryId).orElseThrow(()-> new NotFoundException("Category not found"));
+        if (categoryId != null) {
+            category = categoryRepo.findById(categoryId).orElseThrow(() -> new NotFoundException("Category not found"));
         }
-        if (image != null && !image.isEmpty()){
-            productImageUrl = awsS3Service.saveImageToS3(image);
+        if (image != null && !image.isEmpty()) {
+            // Upload new image to Cloudinary if provided
+            productImageUrl = cloudinaryService.saveImage(image);  // Updated method call
         }
 
         if (category != null) product.setCategory(category);
@@ -76,12 +77,11 @@ public class ProductServiceImpl implements ProductService {
                 .status(200)
                 .message("Product updated successfully")
                 .build();
-
     }
 
     @Override
     public Response deleteProduct(Long productId) {
-        Product product = productRepo.findById(productId).orElseThrow(()-> new NotFoundException("Product Not Found"));
+        Product product = productRepo.findById(productId).orElseThrow(() -> new NotFoundException("Product Not Found"));
         productRepo.delete(product);
 
         return Response.builder()
@@ -92,7 +92,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Response getProductById(Long productId) {
-        Product product = productRepo.findById(productId).orElseThrow(()-> new NotFoundException("Product Not Found"));
+        Product product = productRepo.findById(productId).orElseThrow(() -> new NotFoundException("Product Not Found"));
         ProductDto productDto = entityDtoMapper.mapProductToDtoBasic(product);
 
         return Response.builder()
@@ -112,13 +112,12 @@ public class ProductServiceImpl implements ProductService {
                 .status(200)
                 .productList(productList)
                 .build();
-
     }
 
     @Override
     public Response getProductsByCategory(Long categoryId) {
         List<Product> products = productRepo.findByCategoryId(categoryId);
-        if(products.isEmpty()){
+        if (products.isEmpty()) {
             throw new NotFoundException("No Products found for this category");
         }
         List<ProductDto> productDtoList = products.stream()
@@ -129,20 +128,18 @@ public class ProductServiceImpl implements ProductService {
                 .status(200)
                 .productList(productDtoList)
                 .build();
-
     }
 
     @Override
     public Response searchProduct(String searchValue) {
         List<Product> products = productRepo.findByNameContainingOrDescriptionContaining(searchValue, searchValue);
 
-        if (products.isEmpty()){
+        if (products.isEmpty()) {
             throw new NotFoundException("No Products Found");
         }
         List<ProductDto> productDtoList = products.stream()
                 .map(entityDtoMapper::mapProductToDtoBasic)
                 .collect(Collectors.toList());
-
 
         return Response.builder()
                 .status(200)

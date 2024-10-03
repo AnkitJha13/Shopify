@@ -1,60 +1,43 @@
 package com.athena.Athena_Ecommerce.service;
 
-import com.amazonaws.auth.AWSStaticCredentialsProvider;
-import com.amazonaws.auth.BasicAWSCredentials;
-import com.amazonaws.regions.Regions;
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3ClientBuilder;
-import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.amazonaws.services.s3.model.PutObjectRequest;
-import lombok.extern.slf4j.Slf4j;
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.io.InputStream;
+import java.util.Map;
 
 @Service
-@Slf4j
-public class AwsS3Service {
+public class CloudinaryService {
 
-    private final String bucketName = "athena-ecommerce";
+    private final Cloudinary cloudinary;
 
-    @Value("${aws.s3.access}")
-    private String awsS3AccessKey;
-    @Value("${aws.s3.secrete}")
-    private String awsS3SecreteKey;
+    // Inject Cloudinary credentials from application.properties
+    public CloudinaryService(@Value("${cloudinary.cloud.name}") String cloudName,
+                             @Value("${cloudinary.api.key}") String apiKey,
+                             @Value("${cloudinary.api.secret}") String apiSecret) {
+        // Initialize Cloudinary with the provided credentials
+        this.cloudinary = new Cloudinary(ObjectUtils.asMap(
+                "cloud_name", cloudName,
+                "api_key", apiKey,
+                "api_secret", apiSecret
+        ));
+    }
 
-
-    public String saveImageToS3(MultipartFile photo){
+    // Method to upload the image to Cloudinary
+    public String saveImage(MultipartFile photo) {
         try {
-            String s3FileName = photo.getOriginalFilename();
-            //create aes credentials using the access and secrete key
-            BasicAWSCredentials awsCredentials = new BasicAWSCredentials(awsS3AccessKey, awsS3SecreteKey);
+            // Upload the image to Cloudinary and retrieve the upload result
+            Map uploadResult = cloudinary.uploader().upload(photo.getBytes(),
+                    ObjectUtils.asMap("resource_type", "auto"));
 
-            //create an s3 client with config credentials and region
-            AmazonS3 s3Client = AmazonS3ClientBuilder.standard()
-                    .withCredentials(new AWSStaticCredentialsProvider(awsCredentials))
-                    .withRegion(Regions.EU_NORTH_1)
-                    .build();
-
-            //get input stream from photo
-            InputStream inputStream = photo.getInputStream();
-
-            //set metedata for the onject
-            ObjectMetadata metadata = new ObjectMetadata();
-            metadata.setContentType("image/jpeg");
-
-            //create a put request to upload the image to s3
-            PutObjectRequest putObjectRequest = new PutObjectRequest(bucketName, s3FileName, inputStream, metadata);
-            s3Client.putObject(putObjectRequest);
-
-            return "https://" + bucketName + ".s3.eu-north-1.amazonaws.com/" + s3FileName;
-
-        }catch (IOException e){
-            e.printStackTrace();
-            throw new RuntimeException("Unable to upload image to s3 bucket: " + e.getMessage());
+            // Return the URL of the uploaded image
+            return uploadResult.get("secure_url").toString();
+        } catch (IOException e) {
+            // Handle any exceptions and throw a standard RuntimeException
+            throw new RuntimeException("Unable to upload image to Cloudinary: " + e.getMessage(), e);
         }
     }
 }
