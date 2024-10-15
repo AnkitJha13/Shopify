@@ -2,9 +2,9 @@ import axios from "axios";
 
 export default class ApiService {
 
-     static BASE_URL = "https://ecom-deployment.onrender.com";
+     static BASE_URL = "https://shopify-deployement.onrender.com";
 
-
+    
     static getHeader() {
         const token = localStorage.getItem("token");
         return {
